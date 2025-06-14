@@ -9,6 +9,7 @@ describe('AddThreadUseCase', () => {
     const useCasePayload = {
       title: 'dicoding indo',
       body: 'a new thread by dicoding',
+      owner: 'user-123',
     };
     const mockCreatedThread = new CreatedThread({
       id: 'thread-123',
@@ -40,6 +41,7 @@ describe('AddThreadUseCase', () => {
     expect(mockThreadRepository.addThread).toHaveBeenCalledWith(new NewThread({
       title: useCasePayload.title,
       body: useCasePayload.body,
+      owner: useCasePayload.owner,
     }));
   });
 });
