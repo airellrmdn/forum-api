@@ -1,6 +1,9 @@
 const Hapi = require('@hapi/hapi');
+const Jwt = require('@hapi/jwt');
+const Inert = require('@hapi/inert');
 const authentications = require('../../Interfaces/http/api/authentications');
 const users = require('../../Interfaces/http/api/users');
+const threads = require('../../Interfaces/http/api/threads');
 const config = require('../../Commons/config');
 const DomainErrorTranslator = require('../../Commons/exceptions/DomainErrorTranslator');
 const ClientError = require('../../Commons/exceptions/ClientError');
@@ -10,6 +13,32 @@ const createServer = async (container) => {
     host: config.app.host,
     port: config.app.port,
     debug: config.app.debug
+  });
+
+  await server.register([
+    {
+      plugin: Jwt,
+    },
+    {
+      plugin: Inert,
+    },
+  ]);
+
+  server.auth.strategy('forum_jwt', 'jwt', {
+    keys: process.env.ACCESS_TOKEN_KEY,
+    verify: {
+      aud: false,
+      iss: false,
+      sub: false,
+      maxAgeSec: process.env.ACCESS_TOKEN_AGE,
+    },
+    validate: (artifacts) => ({
+      isValid: true,
+      credentials: {
+        id: artifacts.decoded.payload.id,
+        username: artifacts.decoded.payload.username,
+      },
+    }),
   });
 
   server.route({
@@ -27,6 +56,10 @@ const createServer = async (container) => {
     },
     {
       plugin: authentications,
+      options: { container },
+    },
+    {
+      plugin: threads,
       options: { container },
     },
   ]);
