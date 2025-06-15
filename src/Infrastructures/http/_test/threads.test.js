@@ -94,7 +94,7 @@ describe('/threads endpoint', () => {
           credentials: mockCredentials,
         }
       });
-      console.log(response);
+
       // Assert
       const responseJson = JSON.parse(response.payload);
       expect(response.statusCode).toEqual(400);

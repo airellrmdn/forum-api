@@ -4,6 +4,7 @@ const Inert = require('@hapi/inert');
 const authentications = require('../../Interfaces/http/api/authentications');
 const users = require('../../Interfaces/http/api/users');
 const threads = require('../../Interfaces/http/api/threads');
+const comments = require('../../Interfaces/http/api/comments');
 const config = require('../../Commons/config');
 const DomainErrorTranslator = require('../../Commons/exceptions/DomainErrorTranslator');
 const ClientError = require('../../Commons/exceptions/ClientError');
@@ -60,6 +61,10 @@ const createServer = async (container) => {
     },
     {
       plugin: threads,
+      options: { container },
+    },
+    {
+      plugin: comments,
       options: { container },
     },
   ]);
