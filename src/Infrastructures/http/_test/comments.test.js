@@ -3,6 +3,7 @@ const CommentsTableTestHelper = require('../../../../tests/CommentsTableTestHelp
 const container = require('../../container');
 const createServer = require('../createServer');
 const ThreadsTableTestHelper = require('../../../../tests/ThreadsTableTestHelper');
+const ServerTestHelper = require('../../../../tests/ServerTestHelper');
 
 describe('/comments endpoint', () => {
   afterAll(async () => {
@@ -20,10 +21,7 @@ describe('/comments endpoint', () => {
       const requestPayload = {
         content: 'a comment',
       };
-      const mockCredentials = {
-        id: 'user-123',
-        username: 'airell',
-      };
+      const accessToken = await ServerTestHelper.getAccessToken({ id: 'user-123', username: 'airell r' });
       const server = await createServer(container);
       await ThreadsTableTestHelper.addThread({ id: 'thread-123', owner: 'user-123' });
 
@@ -32,9 +30,8 @@ describe('/comments endpoint', () => {
         method: 'POST',
         url: '/threads/thread-123/comments',
         payload: requestPayload,
-        auth: {
-          strategy: 'forum_jwt',
-          credentials: mockCredentials,
+        headers: {
+          authorization: `Bearer ${accessToken}`,
         }
       });
 
@@ -157,20 +154,17 @@ describe('/comments endpoint', () => {
   describe('when DELETE /comments', () => {
     it('should response 200 and comment deleted', async () => {
       // Arrange
-      const mockCredentials = {
-        id: 'user-123',
-        username: 'airell',
-      };
+      const accessToken = await ServerTestHelper.getAccessToken({ id: 'user-123', username: 'airell r' });
       const server = await createServer(container);
       await ThreadsTableTestHelper.addThread({ id: 'thread-123', owner: 'user-123' });
       await CommentsTableTestHelper.addComment({ id: 'comment-123' });
+
       // Action
       const response = await server.inject({
         method: 'DELETE',
         url: '/threads/thread-123/comments/comment-123',
-        auth: {
-          strategy: 'forum_jwt',
-          credentials: mockCredentials,
+        headers: {
+          authorization: `Bearer ${accessToken}`,
         }
       });
 

@@ -143,7 +143,7 @@ describe('/threads endpoint', () => {
         method: 'GET',
         url: '/threads/thread-123',
       });
-      console.log(response);
+
       // Assert
       const responseJson = JSON.parse(response.payload);
       expect(response.statusCode).toEqual(200);
@@ -163,8 +163,6 @@ describe('/threads endpoint', () => {
         method: 'GET',
         url: '/threads/thread-123',
       });
-
-      console.log(response);
 
       // Assert
       const responseJson = JSON.parse(response.payload);

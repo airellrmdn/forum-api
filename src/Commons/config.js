@@ -1,14 +1,4 @@
-const dotenv = require('dotenv');
-const path = require('path');
-
-if (process.env.node_env === 'test') {
-  dotenv.config({
-    path: path.resolve(process.cwd(), '.test.env'),
-  });
-} else {
-  dotenv.config();
-}
-
+/* istanbul ignore file */
 const config = {
   app: {
     host: process.env.NODE_ENV !== 'production' ? 'localhost' : '0.0.0.0',
