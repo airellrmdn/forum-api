@@ -81,6 +81,18 @@ describe('CommentRepositoryPostgres', () => {
     });
   });
 
+  describe('getCommentByThreadId function', () => {
+    it('should return all thread comment', async () => {
+      // Arrange
+      await CommentsTableTestHelper.addComment({ content: 'a comment' });
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
+
+      // Action & Assert
+      const comment = await commentRepositoryPostgres.getCommentByThreadId('thread-123');
+      expect(comment).toHaveLength(1);
+    });
+  });
+
   describe('verifyCommentOwner function', () => {
     it('should throw AuthorizationError when owner is different', async () => {
       // Arrange

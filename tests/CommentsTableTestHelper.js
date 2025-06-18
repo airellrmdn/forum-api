@@ -1,13 +1,14 @@
+/* eslint-disable camelcase */
 /* istanbul ignore file */
 const pool = require('../src/Infrastructures/database/postgres/pool');
 
 const CommentsTableTestHelper = {
   async addComment({
-    id = 'comment-123', content = 'a comment', date = '2025-06-14T15:11:47.561Z', owner = 'user-123', threadId = 'thread-123'
+    id = 'comment-123', content = 'a comment', date = '2025-06-14T15:11:47.561Z', owner = 'user-123', threadId = 'thread-123', is_delete = false
   }) {
     const query = {
-      text: 'INSERT INTO comments VALUES($1, $2, $3, $4, $5)',
-      values: [id, content, date, owner, threadId],
+      text: 'INSERT INTO comments VALUES($1, $2, $3, $4, $5, $6)',
+      values: [id, content, date, owner, threadId, is_delete],
     };
 
     await pool.query(query);

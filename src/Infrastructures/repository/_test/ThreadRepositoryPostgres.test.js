@@ -1,14 +1,16 @@
 const ThreadsTableTestHelper = require('../../../../tests/ThreadsTableTestHelper');
-const InvariantError = require('../../../Commons/exceptions/InvariantError');
 const NewThread = require('../../../Domains/threads/entities/NewThread');
 const CreatedThread = require('../../../Domains/threads/entities/CreatedThread');
 const pool = require('../../database/postgres/pool');
 const ThreadRepositoryPostgres = require('../ThreadRepositoryPostgres');
 const NotFoundError = require('../../../Commons/exceptions/NotFoundError');
+const DetailsThread = require('../../../Domains/threads/entities/DetailsThread');
+const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
 
 describe('ThreadRepositoryPostgres', () => {
   afterEach(async () => {
     await ThreadsTableTestHelper.cleanTable();
+    await UsersTableTestHelper.cleanTable();
   });
 
   afterAll(async () => {
@@ -57,14 +59,14 @@ describe('ThreadRepositoryPostgres', () => {
   });
 
   describe('getThreadDetailsById', () => {
-    it('should throw InvariantError when thread not found', () => {
+    it('should throw NotFoundError when thread not found', () => {
       // Arrange
       const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, {});
 
       // Action & Assert
       return expect(threadRepositoryPostgres.getThreadDetailsById('thread-123'))
         .rejects
-        .toThrow(InvariantError);
+        .toThrow(NotFoundError);
     });
 
     it('should return thread details when thread is found', async () => {
@@ -74,16 +76,17 @@ describe('ThreadRepositoryPostgres', () => {
         title: 'dicoding thread',
         body: 'a thread body',
       });
+      await UsersTableTestHelper.addUser({ id: 'user-123', username: 'dicoding' });
 
       // Action & Assert
       const threadDetails = await threadRepositoryPostgres.getThreadDetailsById('thread-123');
-      expect(threadDetails).toStrictEqual({
+      expect(threadDetails).toStrictEqual(new DetailsThread({
         id: 'thread-123',
         title: 'dicoding thread',
         body: 'a thread body',
         date: '2025-06-14T15:11:47.561Z',
-        owner: 'user-123',
-      });
+        username: 'dicoding',
+      }));
     });
   });
 
