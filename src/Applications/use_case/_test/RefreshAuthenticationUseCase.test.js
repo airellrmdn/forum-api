@@ -53,14 +53,10 @@ describe('RefreshAuthenticationUseCase', () => {
     const accessToken = await refreshAuthenticationUseCase.execute(useCasePayload);
 
     // Assert
-    expect(mockAuthenticationTokenManager.verifyRefreshToken)
-      .toHaveBeenCalledWith(useCasePayload.refreshToken);
-    expect(mockAuthenticationRepository.checkAvailabilityToken)
-      .toHaveBeenCalledWith(useCasePayload.refreshToken);
-    expect(mockAuthenticationTokenManager.decodePayload)
-      .toHaveBeenCalledWith(useCasePayload.refreshToken);
-    expect(mockAuthenticationTokenManager.createAccessToken)
-      .toHaveBeenCalledWith({ username: 'dicoding', id: 'user-123' });
+    expect(mockAuthenticationTokenManager.verifyRefreshToken).toHaveBeenCalledWith(useCasePayload.refreshToken);
+    expect(mockAuthenticationRepository.checkAvailabilityToken).toHaveBeenCalledWith(useCasePayload.refreshToken);
+    expect(mockAuthenticationTokenManager.decodePayload).toHaveBeenCalledWith(useCasePayload.refreshToken);
+    expect(mockAuthenticationTokenManager.createAccessToken).toHaveBeenCalledWith({ username: 'dicoding', id: 'user-123' });
     expect(accessToken).toEqual('some_new_access_token');
   });
 });

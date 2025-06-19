@@ -25,6 +25,7 @@ describe('ThreadRepositoryPostgres', () => {
         body: 'a thread body',
         owner: 'user-123'
       });
+      await UsersTableTestHelper.addUser({ id: 'user-123' });
       const fakeIdGenerator = () => '123';
       const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, fakeIdGenerator);
 
@@ -43,6 +44,7 @@ describe('ThreadRepositoryPostgres', () => {
         body: 'a thread body',
         owner: 'user-123'
       });
+      await UsersTableTestHelper.addUser({ id: 'user-123' });
       const fakeIdGenerator = () => '123'; // stub!
       const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, fakeIdGenerator);
 
@@ -72,11 +74,11 @@ describe('ThreadRepositoryPostgres', () => {
     it('should return thread details when thread is found', async () => {
       // Arrange
       const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, {});
+      await UsersTableTestHelper.addUser({ id: 'user-123', username: 'dicoding' });
       await ThreadsTableTestHelper.addThread({
         title: 'dicoding thread',
         body: 'a thread body',
       });
-      await UsersTableTestHelper.addUser({ id: 'user-123', username: 'dicoding' });
 
       // Action & Assert
       const threadDetails = await threadRepositoryPostgres.getThreadDetailsById('thread-123');
@@ -102,6 +104,7 @@ describe('ThreadRepositoryPostgres', () => {
     });
 
     it('should not throw NotFoundErrorr when thread is found', async () => {
+      await UsersTableTestHelper.addUser({ id: 'user-123' });
       await ThreadsTableTestHelper.addThread({
         title: 'dicoding thread',
         body: 'a thread body',

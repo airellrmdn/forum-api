@@ -20,6 +20,7 @@ describe('/threads endpoint', () => {
   describe('when POST /threads', () => {
     it('should response 201 and persisted thread', async () => {
       // Arrange
+      await UsersTableTestHelper.addUser({ id: 'user-123' });
       const requestPayload = {
         title: 'dicoding thread',
         body: 'a thread body',
@@ -133,9 +134,9 @@ describe('/threads endpoint', () => {
   describe('when GET /threads/{threadId}', () => {
     it('should response 200 and show thread details with normal comment', async () => {
       // Arrange
+      await UsersTableTestHelper.addUser({ username: 'dicoding1' });
       await ThreadsTableTestHelper.addThread({ id: 'thread-123', owner: 'user-123' });
       await CommentsTableTestHelper.addComment({ id: 'comment-123', threadId: 'thread-123' });
-      await UsersTableTestHelper.addUser({ username: 'dicoding1' });
       const server = await createServer(container);
 
       // Action
@@ -153,9 +154,9 @@ describe('/threads endpoint', () => {
 
     it('should response 200 and show thread details with deleted comment', async () => {
       // Arrange
+      await UsersTableTestHelper.addUser({ id: 'user-123', username: 'dicoding1' });
       await ThreadsTableTestHelper.addThread({ id: 'thread-123', owner: 'user-123' });
       await CommentsTableTestHelper.addComment({ id: 'comment-123', is_delete: true });
-      await UsersTableTestHelper.addUser({ id: 'user-123', username: 'dicoding1' });
       const server = await createServer(container);
 
       // Action

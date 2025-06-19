@@ -4,6 +4,7 @@ const container = require('../../container');
 const createServer = require('../createServer');
 const ThreadsTableTestHelper = require('../../../../tests/ThreadsTableTestHelper');
 const ServerTestHelper = require('../../../../tests/ServerTestHelper');
+const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
 
 describe('/comments endpoint', () => {
   afterAll(async () => {
@@ -13,6 +14,7 @@ describe('/comments endpoint', () => {
   afterEach(async () => {
     await CommentsTableTestHelper.cleanTable();
     await ThreadsTableTestHelper.cleanTable();
+    await UsersTableTestHelper.cleanTable();
   });
 
   describe('when POST /comments', () => {
@@ -23,6 +25,7 @@ describe('/comments endpoint', () => {
       };
       const accessToken = await ServerTestHelper.getAccessToken({ id: 'user-123', username: 'airell r' });
       const server = await createServer(container);
+      await UsersTableTestHelper.addUser({ id: 'user-123' });
       await ThreadsTableTestHelper.addThread({ id: 'thread-123', owner: 'user-123' });
 
       // Action
@@ -50,6 +53,7 @@ describe('/comments endpoint', () => {
         username: 'airell',
       };
       const server = await createServer(container);
+      await UsersTableTestHelper.addUser({ id: 'user-123' });
       await ThreadsTableTestHelper.addThread({ id: 'thread-123', owner: 'user-123' });
 
       // Action
@@ -80,6 +84,7 @@ describe('/comments endpoint', () => {
         username: 'airell',
       };
       const server = await createServer(container);
+      await UsersTableTestHelper.addUser({ id: 'user-123' });
       await ThreadsTableTestHelper.addThread({ id: 'thread-123', owner: 'user-123' });
 
       // Action
@@ -156,6 +161,7 @@ describe('/comments endpoint', () => {
       // Arrange
       const accessToken = await ServerTestHelper.getAccessToken({ id: 'user-123', username: 'airell r' });
       const server = await createServer(container);
+      await UsersTableTestHelper.addUser({ id: 'user-123' });
       await ThreadsTableTestHelper.addThread({ id: 'thread-123', owner: 'user-123' });
       await CommentsTableTestHelper.addComment({ id: 'comment-123' });
 
@@ -181,6 +187,8 @@ describe('/comments endpoint', () => {
         username: 'airell',
       };
       const server = await createServer(container);
+      await UsersTableTestHelper.addUser({ id: 'user-125', username: 'test-123' });
+      await UsersTableTestHelper.addUser({ id: 'user-123' });
       await ThreadsTableTestHelper.addThread({ id: 'thread-123', owner: 'user-125' });
       await CommentsTableTestHelper.addComment({ id: 'comment-123', owner: 'user-123' });
 
@@ -208,6 +216,7 @@ describe('/comments endpoint', () => {
         username: 'airell',
       };
       const server = await createServer(container);
+      await UsersTableTestHelper.addUser({ id: 'user-123' });
       await ThreadsTableTestHelper.addThread({ id: 'thread-123', owner: 'user-123' });
 
       // Action

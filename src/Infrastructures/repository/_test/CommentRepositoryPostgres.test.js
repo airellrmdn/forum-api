@@ -5,10 +5,14 @@ const pool = require('../../database/postgres/pool');
 const CommentsTableTestHelper = require('../../../../tests/CommentsTableTestHelper');
 const AuthorizationError = require('../../../Commons/exceptions/AuthorizationError');
 const NotFoundError = require('../../../Commons/exceptions/NotFoundError');
+const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
+const ThreadsTableTestHelper = require('../../../../tests/ThreadsTableTestHelper');
 
 describe('CommentRepositoryPostgres', () => {
   afterEach(async () => {
     await CommentsTableTestHelper.cleanTable();
+    await UsersTableTestHelper.cleanTable();
+    await ThreadsTableTestHelper.cleanTable();
   });
 
   afterAll(async () => {
@@ -24,6 +28,8 @@ describe('CommentRepositoryPostgres', () => {
         threadId: 'thread-123',
       });
       const fakeIdGenerator = () => '123';
+      await UsersTableTestHelper.addUser({ id: 'user-123' });
+      await ThreadsTableTestHelper.addThread({ id: 'thread-123', owner: 'user-123' });
       const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, fakeIdGenerator);
 
       // Action
@@ -41,7 +47,9 @@ describe('CommentRepositoryPostgres', () => {
         owner: 'user-123',
         threadId: 'thread-123',
       });
-      const fakeIdGenerator = () => '123'; // stub!
+      const fakeIdGenerator = () => '123';
+      await UsersTableTestHelper.addUser({ id: 'user-123' });
+      await ThreadsTableTestHelper.addThread({ id: 'thread-123', owner: 'user-123' });
       const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, fakeIdGenerator);
 
       // Action
@@ -61,6 +69,8 @@ describe('CommentRepositoryPostgres', () => {
       // Arrange
       const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
       const id = 'comment-123';
+      await UsersTableTestHelper.addUser({ id: 'user-123' });
+      await ThreadsTableTestHelper.addThread({ id: 'thread-123', owner: 'user-123' });
       await CommentsTableTestHelper.addComment({ id, content: 'a comment' });
 
       // Action & Assert
@@ -84,6 +94,8 @@ describe('CommentRepositoryPostgres', () => {
   describe('getCommentByThreadId function', () => {
     it('should return all thread comment', async () => {
       // Arrange
+      await UsersTableTestHelper.addUser({ id: 'user-123' });
+      await ThreadsTableTestHelper.addThread({ id: 'thread-123', owner: 'user-123' });
       await CommentsTableTestHelper.addComment({ content: 'a comment' });
       const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
 
@@ -96,6 +108,8 @@ describe('CommentRepositoryPostgres', () => {
   describe('verifyCommentOwner function', () => {
     it('should throw AuthorizationError when owner is different', async () => {
       // Arrange
+      await UsersTableTestHelper.addUser({ id: 'user-123' });
+      await ThreadsTableTestHelper.addThread({ id: 'thread-123', owner: 'user-123' });
       await CommentsTableTestHelper.addComment({ content: 'a comment' });
       const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
 
@@ -114,6 +128,8 @@ describe('CommentRepositoryPostgres', () => {
     });
 
     it('should not throw AuthorizationError when owner is correct', async () => {
+      await UsersTableTestHelper.addUser({ id: 'user-123' });
+      await ThreadsTableTestHelper.addThread({ id: 'thread-123', owner: 'user-123' });
       await CommentsTableTestHelper.addComment({ content: 'a comment' });
       const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
 
