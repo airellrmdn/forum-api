@@ -10,7 +10,7 @@ describe('ThreadDetailsUseCase', () => {
     const useCasePayload = {
       threadId: 'thread-123',
     };
-    const mockThreadDetails = new DetailsThread({
+    const mockThread = new DetailsThread({
       id: 'thread-123',
       title: 'a thread',
       body: 'a thread body',
@@ -33,28 +33,7 @@ describe('ThreadDetailsUseCase', () => {
         is_delete: true,
       }
     ];
-
-    /** creating dependency of use case */
-    const mockThreadRepository = new ThreadRepository();
-    const mockCommentRepository = new CommentRepository();
-
-    /** mocking needed function */
-    mockThreadRepository.getThreadDetailsById = jest.fn()
-      .mockImplementation(() => Promise.resolve(mockThreadDetails));
-    mockCommentRepository.getCommentByThreadId = jest.fn()
-      .mockImplementation(() => Promise.resolve(mockComments));
-
-    /** creating use case instance */
-    const getThreadUseCase = new ThreadDetailsUseCase({
-      threadRepository: mockThreadRepository,
-      commentRepository: mockCommentRepository,
-    });
-
-    // Action
-    const threadDetails = await getThreadUseCase.execute(useCasePayload);
-
-    // Assert
-    expect(threadDetails).toEqual({
+    const mockThreadDetail = {
       id: 'thread-123',
       title: 'a thread',
       body: 'a thread body',
@@ -74,7 +53,29 @@ describe('ThreadDetailsUseCase', () => {
           content: '**komentar telah dihapus**',
         }
       ]
+    };
+
+    /** creating dependency of use case */
+    const mockThreadRepository = new ThreadRepository();
+    const mockCommentRepository = new CommentRepository();
+
+    /** mocking needed function */
+    mockThreadRepository.getThreadDetailsById = jest.fn()
+      .mockImplementation(() => Promise.resolve(mockThread));
+    mockCommentRepository.getCommentByThreadId = jest.fn()
+      .mockImplementation(() => Promise.resolve(mockComments));
+
+    /** creating use case instance */
+    const getThreadUseCase = new ThreadDetailsUseCase({
+      threadRepository: mockThreadRepository,
+      commentRepository: mockCommentRepository,
     });
+
+    // Action
+    const threadDetails = await getThreadUseCase.execute(useCasePayload);
+
+    // Assert
+    expect(threadDetails).toEqual(mockThreadDetail);
     expect(mockThreadRepository.getThreadDetailsById).toHaveBeenCalledWith(useCasePayload.threadId);
     expect(mockCommentRepository.getCommentByThreadId).toHaveBeenCalledWith(useCasePayload.threadId);
   });

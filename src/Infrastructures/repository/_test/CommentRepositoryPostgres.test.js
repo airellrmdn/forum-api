@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 const NewComment = require('../../../Domains/comments/entities/NewComment');
 const CreatedComment = require('../../../Domains/comments/entities/CreatedComment');
 const CommentRepositoryPostgres = require('../CommentRepositoryPostgres');
@@ -94,14 +95,28 @@ describe('CommentRepositoryPostgres', () => {
   describe('getCommentByThreadId function', () => {
     it('should return all thread comment', async () => {
       // Arrange
-      await UsersTableTestHelper.addUser({ id: 'user-123' });
+      const username = 'test account';
+      const mockComment = {
+        id: 'thread-123',
+        content: 'a comment',
+        date: '2025-06-14T15:11:47.561Z',
+        owner: 'user-123',
+        threadId: 'thread-123',
+        is_delete: false,
+      };
+      await UsersTableTestHelper.addUser({ id: 'user-123', username });
       await ThreadsTableTestHelper.addThread({ id: 'thread-123', owner: 'user-123' });
-      await CommentsTableTestHelper.addComment({ content: 'a comment' });
+      await CommentsTableTestHelper.addComment(mockComment);
       const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
 
       // Action & Assert
       const comment = await commentRepositoryPostgres.getCommentByThreadId('thread-123');
       expect(comment).toHaveLength(1);
+      expect(comment[0].id).toEqual(mockComment.id);
+      expect(comment[0].content).toEqual(mockComment.content);
+      expect(comment[0].date).toEqual(mockComment.date);
+      expect(comment[0].username).toEqual(username);
+      expect(comment[0].is_delete).toEqual(mockComment.is_delete);
     });
   });
 
@@ -114,7 +129,9 @@ describe('CommentRepositoryPostgres', () => {
       const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
 
       // Action & Assert
-      await expect(commentRepositoryPostgres.verifyCommentOwner('comment-123', 'user-125')).rejects.toThrow(AuthorizationError);
+      await expect(commentRepositoryPostgres.verifyCommentOwner('comment-123', 'user-125'))
+        .rejects
+        .toThrow(AuthorizationError);
     });
 
     it('should throw NotFoundError when comment not found', () => {
@@ -134,7 +151,9 @@ describe('CommentRepositoryPostgres', () => {
       const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
 
       // Action & Assert
-      await expect(commentRepositoryPostgres.verifyCommentOwner('comment-123', 'user-123')).resolves.not.toThrow(AuthorizationError);
+      await expect(commentRepositoryPostgres.verifyCommentOwner('comment-123', 'user-123'))
+        .resolves
+        .not.toThrow(AuthorizationError);
     });
   });
 });
