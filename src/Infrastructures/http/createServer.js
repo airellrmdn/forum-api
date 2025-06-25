@@ -42,13 +42,22 @@ const createServer = async (container) => {
     }),
   });
 
-  server.route({
-    method: 'GET',
-    path: '/',
-    handler: () => {
-      return { status: 'OK' };
+  server.route(
+    {
+      method: 'GET',
+      path: '/',
+      handler: () => {
+        return { status: 'OK' };
+      },
     },
-  });
+    {
+      method: 'GET',
+      path: '/ping',
+      handler: () => {
+        return { message: 'PONG' };
+      },
+    },
+  );
 
   await server.register([
     {
