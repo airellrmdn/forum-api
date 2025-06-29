@@ -42,7 +42,7 @@ const createServer = async (container) => {
     }),
   });
 
-  server.route(
+  server.route([
     {
       method: 'GET',
       path: '/',
@@ -57,7 +57,7 @@ const createServer = async (container) => {
         return { message: 'PONG' };
       },
     },
-  );
+  ]);
 
   await server.register([
     {
