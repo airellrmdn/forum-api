@@ -25,6 +25,20 @@ describe('HTTP server', () => {
     expect(responseJson.status).toEqual('OK');
   });
 
+  it('should response 200 when request to "/ping" route', async () => {
+    // Arrange
+    const server = await createServer({});
+    // Action
+    const response = await server.inject({
+      method: 'GET',
+      url: '/ping',
+    });
+    // Assert
+    const responseJson = JSON.parse(response.payload);
+    expect(response.statusCode).toEqual(200);
+    expect(responseJson.message).toEqual('PONG');
+  });
+
   it('should response 404 when request unregistered route', async () => {
     // Arrange
     const server = await createServer({});
